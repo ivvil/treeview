@@ -1,22 +1,22 @@
 [
   {
-	"name": "Index",
-	"id": "index",
-	"isIndex": true,
-	"links": ["page_1", "page_2"]
+    "id": "index",
+    "name": "Index",
+    "links": ["page_1", "page_2"]
   },
   {
-	"name": "Page 1",
-	"id": "page_1"
+    "id": "page_1",
+    "name": "Page 1",
+    "links": []
   },
   {
-	"name": "Page 2",
-	"id": "page_2",
-	"links": ["page_3"]
+    "id": "page_2",
+    "name": "Page 2",
+    "links": ["page_3"]
   },
   {
-	"name": "Page 3",
-	"id": "page_3",
-	"links": ["page_1"]
+    "id": "page_3",
+    "name": "Page 3",
+    "links": ["page_1"]
   }
 ]

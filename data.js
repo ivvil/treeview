@@ -1,46 +1,4 @@
-export { PageTree };
-
-class PageTree {
-  indexId;
-  pages;
-  
-  constructor(indexId, pages) {
-	this.indexId = indexId;
-	this.pages = this.#getIdMap(pages);
-
-	if (!this.pages.has(indexId)) {
-	  throw new Error("A valid indexId must be provided");
-	}
-  }
-
-  #getIdMap(pages) {
-	const map = new Map();
-	
-	for(let page of pages) {
-	  if (typeof(page.id) != "undefined") {
-		map.set(page.id, page);
-	  } else {
-		console.warn("The page", page, "doesn't contain an id, skipping");
-	  }
-	}
-
-	return map;
-  }
-
-  getIndex() {
-	return this.pages.get(this.indexId);
-  }
-
-  static fromJSON(json) {
-	let obj = typeof json === 'string' ? JSON.parse(json) : json;
-	
-	const index = obj.find(page => page.isIndex === true);
-
-	return new PageTree(index.id, obj);
-  }
-
-  
-}
+export { Page, PageGraph };
 
 class Page {
   
@@ -105,6 +63,12 @@ class PageGraph {
 	this.pages.set(id, page);
   }
 
+  /**
+   * Adds a link between two pages in the graph.
+   * @param {string} sourceId - The ID of the source page.
+   * @param {string} targetId - The ID of the target page.
+   * @throws {Error} If either the source or target page does not exist.
+   */
   addLink(sourceId, targetId) {
 	const sourcePage = this.pages.get(sourceId);
 	const targetPage = this.pages.get(targetId);
@@ -114,6 +78,28 @@ class PageGraph {
 	}
 
 	sourcePage.addLink(targetPage);
+  }
+
+  /**
+   * Deserializes JSON into a PageGraph instance.
+   * @param {JSON} pageData - The JSON representation of the graph.
+   * @returns {PageGraph} The deserialized PageGraph instance.
+   * @throws {Error} If the JSON is invalid or cannot be parsed.
+   */
+  static deserialize(pageData) {
+	const pageGraph = new PageGraph;
+
+	for (let { id, name } of pageData) {
+	  pageGraph.addPage(id, name);
+	}
+	
+	for (let { id, links } of pageData) {
+	  for(let linkId of links) {
+		pageGraph.addLink(id, linkId)
+	  }
+	}
+
+	return pageGraph;
   }
 
 }
