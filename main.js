@@ -3,13 +3,15 @@ import WebGL from 'three/addons/capabilities/WebGL.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import { PageGraph } from "./data.js";
-import { render } from "./renderer.js"
+import { render, rankLength } from "./renderer.js"
 
 const response = await fetch("testdata.json");
 
 const json = await response.json();
 
 const pageGraph = PageGraph.deserialize(json);
+
+console.log(rankLength(pageGraph));
 
 if (WebGL.isWebGL2Available()) {
 	// Do init stuff

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { PageGraph } from "./data";
 
-export { render };
+export { render, rankLength };
 
 /**
  * Renders a Graph into the viewport
@@ -75,5 +75,45 @@ function createLink(start, end) {
   const line = new THREE.Line(geometry, material);
 
   return line;
+}
+
+
+/**
+ * Ranks the pages of a graph based on their connections to the index page using BFS.
+ * @param {PageGraph} graph - The PageGraph to rank.
+ * @returns {Array<Set<String>>} - The rank of the pages
+ */
+function rankLength(graph) {
+  const rank = [];
+  const queue = ["index"];  // Start with the index page
+  const visited = new Set(["index"]);  // Visited pages
+  rank.push(new Set(["index"]));  // Initialize the first layer
+
+  while (queue.length > 0) {
+    const currLayer = new Set();
+    const nextQueue = [];  // Temporary queue for next layer
+
+    for (const pageId of queue) {
+      const page = graph.pages.get(pageId);
+
+      // Process each link
+      for (const link of page.links) {
+        if (!visited.has(link.id)) {
+          visited.add(link.id);
+          currLayer.add(link.id);
+          nextQueue.push(link.id);
+        }
+      }
+    }
+
+    if (currLayer.size > 0) {
+      rank.push(currLayer);  
+    }
+
+    queue.length = 0;  // Clear the queue
+    queue.push(...nextQueue);  // Prepare for the next
+  }
+
+  return rank;
 }
 
